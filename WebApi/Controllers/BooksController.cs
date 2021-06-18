@@ -1,35 +1,39 @@
-using System;
-using System.Linq;
-using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using WebApi.BookOperations.CreateBook;
-using WebApi.BookOperations.DeleteBook;
-using WebApi.BookOperations.GetBook;
-using WebApi.BookOperations.GetBooks;
-using WebApi.BookOperations.UpdateBook;
-using WebApi.DbOperations;
+using FluentValidation;
 
 namespace WebApi.Controllers
 {
+    using System;
+
+    using AutoMapper;
+
+    using Microsoft.AspNetCore.Mvc;
+
+    using BookOperations.CreateBook;
+    using BookOperations.DeleteBook;
+    using BookOperations.GetBook;
+    using BookOperations.GetBooks;
+    using BookOperations.UpdateBook;
+    using DbOperations;
+
     [Route("api/[controller]")]
     [ApiController]
     public class BooksController : ControllerBase
     {
         private readonly BookStoreDbContext _context;
+
         private readonly IMapper _mapper;
 
         public BooksController(BookStoreDbContext context, IMapper mapper)
         {
-            _context = context;
-            _mapper = mapper;
+            this._context = context;
+            this._mapper = mapper;
         }
 
         [HttpGet]
         public IActionResult GetBooks()
         {
-            var query = new GetBooksQuery(_context, _mapper);
-            return Ok(query.Handle());
+            var query = new GetBooksQuery(this._context, this._mapper);
+            return this.Ok(query.Handle());
         }
 
         [HttpGet("id")]
@@ -37,12 +41,14 @@ namespace WebApi.Controllers
         {
             try
             {
-                var query = new GetBookQuery(_context, _mapper) { BookId = id };
-                return Ok(query.Handle());
+                var query = new GetBookQuery(this._context, this._mapper) { BookId = id };
+                var validator = new GetBookQueryValidator();
+                validator.ValidateAndThrow(query);
+                return this.Ok(query.Handle());
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return this.BadRequest(e.Message);
             }
         }
 
@@ -51,13 +57,15 @@ namespace WebApi.Controllers
         {
             try
             {
-                var createBookCommand = new CreateBookCommand(_context, _mapper) { BookModel = bookModel };
+                var createBookCommand = new CreateBookCommand(this._context, this._mapper) { BookModel = bookModel };
+                var validator = new CreateBookCommandValidator();
+                validator.ValidateAndThrow(createBookCommand);
                 createBookCommand.Handle();
-                return Ok();
+                return this.Ok();
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return this.BadRequest(e.Message);
             }
         }
 
@@ -66,13 +74,15 @@ namespace WebApi.Controllers
         {
             try
             {
-                var updateBookCommand = new UpdateBookCommand(_context) { BookModel = bookModel, BookId = id };
+                var updateBookCommand = new UpdateBookCommand(this._context) { BookModel = bookModel, BookId = id };
+                var validator = new UpdateBookCommandValidator();
+                validator.ValidateAndThrow(updateBookCommand);
                 updateBookCommand.Handle();
-                return Ok();
+                return this.Ok();
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return this.BadRequest(e.Message);
             }
         }
 
@@ -81,14 +91,15 @@ namespace WebApi.Controllers
         {
             try
             {
-                var deleteBookCommand = new DeleteBookCommand(_context);
-                deleteBookCommand.BookId = id;
+                var deleteBookCommand = new DeleteBookCommand(this._context) { BookId = id };
+                var validator = new DeleteBookCommandValidator();
+                validator.ValidateAndThrow(deleteBookCommand);
                 deleteBookCommand.Handle();
-                return Ok();
+                return this.Ok();
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return this.BadRequest(e.Message);
             }
         }
     }

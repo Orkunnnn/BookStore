@@ -1,14 +1,13 @@
-﻿using System;
-using System.Linq;
-using AutoMapper;
-using WebApi.Common;
-using WebApi.DbOperations;
-
-namespace WebApi.BookOperations.GetBook
+﻿namespace WebApi.BookOperations.GetBook
 {
+    using System;
+    using System.Linq;
+    using AutoMapper;
+    using FluentValidation;
+    using DbOperations;
+
     public class GetBookQuery
     {
-        public int BookId { get; set; }
         private readonly BookStoreDbContext _dbContext;
         private readonly IMapper _mapper;
 
@@ -18,9 +17,12 @@ namespace WebApi.BookOperations.GetBook
             _mapper = mapper;
         }
 
+        public int BookId { get; set; }
+
         public BookViewModel Handle()
         {
             var book = _dbContext.Books.SingleOrDefault(x => x.Id == BookId);
+
             if (book == null)
             {
                 throw new InvalidOperationException("Kitap mevcut değil");
@@ -34,8 +36,11 @@ namespace WebApi.BookOperations.GetBook
     public class BookViewModel
     {
         public string Title { get; set; }
+
         public string Genre { get; set; }
+
         public int PageCount { get; set; }
+
         public string PublishDate { get; set; }
     }
 }
