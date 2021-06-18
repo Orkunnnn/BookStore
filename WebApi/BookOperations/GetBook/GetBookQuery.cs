@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
     using AutoMapper;
-    using FluentValidation;
     using DbOperations;
 
     public class GetBookQuery

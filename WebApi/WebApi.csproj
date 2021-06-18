@@ -16,10 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Compile Update="Controllers\BooksController.cs">
         <ExcludeFromSourceAnalysis>False</ExcludeFromSourceAnalysis>
         <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
