@@ -39,68 +39,41 @@ namespace WebApi.Controllers
         [HttpGet("id")]
         public IActionResult GetBookById(int id)
         {
-            try
-            {
                 var query = new GetBookQuery(this._context, this._mapper) { BookId = id };
                 var validator = new GetBookQueryValidator();
                 validator.ValidateAndThrow(query);
                 return this.Ok(query.Handle());
-            }
-            catch (Exception e)
-            {
-                return this.BadRequest(e.Message);
-            }
         }
 
         [HttpPost]
         public IActionResult AddBook([FromBody] CreateBookModel bookModel)
         {
-            try
-            {
+            
                 var createBookCommand = new CreateBookCommand(this._context, this._mapper) { BookModel = bookModel };
                 var validator = new CreateBookCommandValidator();
                 validator.ValidateAndThrow(createBookCommand);
                 createBookCommand.Handle();
                 return this.Ok();
-            }
-            catch (Exception e)
-            {
-                return this.BadRequest(e.Message);
-            }
         }
 
         [HttpPut("id")]
         public IActionResult UpdateBook(int id, [FromBody] UpdateBookModel bookModel)
         {
-            try
-            {
-                var updateBookCommand = new UpdateBookCommand(this._context) { BookModel = bookModel, BookId = id };
+            var updateBookCommand = new UpdateBookCommand(this._context) { BookModel = bookModel, BookId = id };
                 var validator = new UpdateBookCommandValidator();
                 validator.ValidateAndThrow(updateBookCommand);
                 updateBookCommand.Handle();
                 return this.Ok();
-            }
-            catch (Exception e)
-            {
-                return this.BadRequest(e.Message);
-            }
         }
 
         [HttpDelete("id")]
         public IActionResult DeleteBook(int id)
         {
-            try
-            {
-                var deleteBookCommand = new DeleteBookCommand(this._context) { BookId = id };
+            var deleteBookCommand = new DeleteBookCommand(this._context) { BookId = id };
                 var validator = new DeleteBookCommandValidator();
                 validator.ValidateAndThrow(deleteBookCommand);
                 deleteBookCommand.Handle();
                 return this.Ok();
-            }
-            catch (Exception e)
-            {
-                return this.BadRequest(e.Message);
-            }
         }
     }
 }
